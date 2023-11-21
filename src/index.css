@@ -10,12 +10,30 @@ body {
   background-image: url(./img/bg.jpg);
   background-size: cover;
   background-position: center;
-  /* background-repeat: no-repeat; */
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
 }
 
 @font-face {
   font-family: 'Pixel';
   src: url('font/Pixel-LCD-7.woff') format('woff');
+}
+
+.tetris-container {
+  padding: 40px;
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.aside {
+  max-width: 400px;
+  min-width: 160px;
+  display: block;
+  padding: 0 20px;
 }
 
 .stage {
@@ -24,9 +42,6 @@ body {
   display: grid;
   border: 5px solid #333;
   gap: 1px;
-  /* grid-template-rows: repeat(20, calc(25vw / 10)); */
-  /* grid-template-columns: repeat(10, 1fr); */
-  max-width: 800px;
-  max-height: 90vh;
-  margin: 0 auto;
+  grid-template-columns: repeat(10, 1fr);
+  height: 90vh;
 }
