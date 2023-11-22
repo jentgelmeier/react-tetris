@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { STAGE_WIDTH, createStage } from "../utils/gameHelper";
 
-function useStage(player, resetPlayer) {
+export function useStage(player = {}, resetPlayer, resetOccurred, setResetOccurred, endGame) {
   const [stage, setStage] = useState(createStage());
   const [linesCleared, setLinesCleared] = useState(0);
 
@@ -27,19 +27,25 @@ function useStage(player, resetPlayer) {
       );
 
       // draw the active block
-      player.tetromino.forEach((row, y) =>
-        row.forEach((cell, x) => {
-          if (cell !== 0) {
-            newStage[y + player.pos.y][x + player.pos.x] = [
-              cell,
-              player.collided ? "merged" : "clear",
-            ];
-          }
-        })
-      );
+        player.tetromino.forEach((row, y) =>
+          row.forEach((cell, x) => {
+            if (cell !== 0) {
+              if (resetOccurred) {
+                if (prevStage[y + player.pos.y][x + player.pos.x][0] !== 0) {
+                  endGame();
+                  return;
+                }
+                setResetOccurred(false);
+              }
+              newStage[y + player.pos.y][x + player.pos.x] = [
+                cell,
+                player.collided ? "merged" : "clear",
+              ];
+            }
+          })
+        );
 
       if (player.collided) {
-        resetPlayer();
         return clearLines(newStage);
       }
 
@@ -47,9 +53,8 @@ function useStage(player, resetPlayer) {
     }
 
     setStage((prev) => updateStage(prev));
-  }, [player, resetPlayer]);
+    if (player.collided) resetPlayer();
+  }, [player]);
 
   return [stage, setStage, linesCleared];
 }
-
-export default useStage;

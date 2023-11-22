@@ -20,6 +20,12 @@ body {
   src: url('font/Pixel-LCD-7.woff') format('woff');
 }
 
+.tetris-wrapper {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
 .tetris-container {
   padding: 40px;
   display: flex;

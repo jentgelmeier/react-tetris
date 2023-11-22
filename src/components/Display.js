@@ -9,6 +9,7 @@ function Display({ text, gameOver = false }) {
         borderRadius: "10px",
         color: gameOver ? "red" : "#999999",
         fontSize: "0.8rem",
+        whiteSpace: "nowrap",
       }}
     >
       {text}
