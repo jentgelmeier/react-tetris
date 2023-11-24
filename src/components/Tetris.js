@@ -84,6 +84,8 @@ function Tetris() {
         case 40:
           dropPlayer();
           break;
+        default:
+          break;
       }
     }
   }
