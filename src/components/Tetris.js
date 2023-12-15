@@ -1,4 +1,6 @@
 import React, { useRef, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPause, faPlay } from "@fortawesome/free-solid-svg-icons";
 
 // Components
 import Stage from "./Stage";
@@ -17,6 +19,8 @@ import { useInterval } from "../hooks/useInterval";
 
 function Tetris() {
   const [gameOver, setGameOver] = useState(false);
+  const [gamePlaying, setGamePlaying] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
   const [showPlayButton, setShowPlayButton] = useState(true);
   const [dropTime, setDropTime] = useState(null);
   const ref = useRef(null);
@@ -26,8 +30,21 @@ function Tetris() {
     setDropTime(null);
   }
 
-  const [player, updatePlayerPosition, resetPlayer, rotatePlayer, resetOccurred, setResetOccurred] = usePlayer();
-  const [stage, setStage, linesCleared] = useStage(player, resetPlayer, resetOccurred, setResetOccurred, endGame);
+  const [
+    player,
+    updatePlayerPosition,
+    resetPlayer,
+    rotatePlayer,
+    resetOccurred,
+    setResetOccurred,
+  ] = usePlayer();
+  const [stage, setStage, linesCleared] = useStage(
+    player,
+    resetPlayer,
+    resetOccurred,
+    setResetOccurred,
+    endGame
+  );
   const [score, setScore, lines, setLines, level, setLevel] =
     useGameStatus(linesCleared);
 
@@ -43,6 +60,8 @@ function Tetris() {
   function startGame() {
     setShowPlayButton(false);
     setGameOver(false);
+    setGamePlaying(true);
+    setGameStarted(true);
     setStage(createStage());
     resetPlayer();
     setScore(0);
@@ -50,6 +69,11 @@ function Tetris() {
     setLevel(1);
     setDropTime(dropSpeed);
     ref.current.focus();
+  }
+
+  function togglePause() {
+    setDropTime(dropTime ? null : dropSpeed);
+    setGamePlaying(!gamePlaying);
   }
 
   function drop() {
@@ -67,7 +91,7 @@ function Tetris() {
 
   function move({ keyCode }) {
     // console.log(keyCode);
-    if (!gameOver) {
+    if (gamePlaying) {
       switch (keyCode) {
         case 37:
           movePlayer(-1);
@@ -95,7 +119,7 @@ function Tetris() {
   }, dropTime);
 
   function handleKeyUp({ keyCode }) {
-    if (keyCode === 40) {
+    if (keyCode === 40 && gamePlaying) {
       setDropTime(dropSpeed);
     }
   }
@@ -125,7 +149,9 @@ function Tetris() {
       onKeyDown={(e) => move(e)}
       onKeyUp={(e) => handleKeyUp(e)}
     >
-      <div className="tetris-container">
+      <div
+        className="tetris-container"
+      >
         <aside className="aside">
           {/* <Window title="Hold" /> */}
           <div>
@@ -135,7 +161,7 @@ function Tetris() {
             {gameOver && <Display text="Game Over" gameOver />}
           </div>
         </aside>
-        <Stage stage={stage} />
+        <Stage stage={stage} style={{ opacity: gameStarted && !gamePlaying && "0.5" }}/>
         <aside className="aside">{/* <Window title="Next" /> */}</aside>
 
         <PlayButton
@@ -143,6 +169,15 @@ function Tetris() {
           show={gameOver ? true : showPlayButton}
           onClick={startGame}
         />
+
+        <button
+          className="btn btn-dark pause-button"
+          type="button"
+          onClick={() => togglePause()}
+          style={{ display: !gameStarted && "none" }}
+        >
+          <FontAwesomeIcon icon={gamePlaying ? faPause : faPlay} size="xl" />
+        </button>
       </div>
     </div>
   );
